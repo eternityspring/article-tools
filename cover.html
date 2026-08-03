@@ -1397,6 +1397,12 @@
     <span class="header-ratio" id="ratio-label">5:2 · 1200×480</span>
     <div class="header-spacer"></div>
     <div class="header-actions">
+      <a class="cv-link" href="https://coverly.79px.com/" target="_blank" rel="noopener" aria-label="前往新版封面工具 Coverly">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 17 17 7M8 7h9v9"/>
+        </svg>
+        <span>新版 Coverly</span>
+      </a>
       <button class="grp-hbtn" aria-label="加入烁皓 AI 交流群" onclick="grpOpen()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -3295,6 +3301,20 @@
 
   <!-- ── AI 交流群入口（各工具页统一注入） ── -->
   <style>
+    .cv-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 20px;
+      background: #24292f; color: #fff; text-decoration: none;
+      font-size: 12px; font-weight: 700; line-height: 1;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      white-space: nowrap; flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(36,41,47,0.25);
+      transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
+    }
+    .cv-link:hover { filter: brightness(1.15); box-shadow: 0 6px 16px rgba(36,41,47,0.35); transform: translateY(-1px) scale(1.03); }
+    .cv-link:active { transform: translateY(0) scale(1); }
+    .cv-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
     .grp-hbtn {
       position: relative; overflow: hidden;
       display: inline-flex; align-items: center; gap: 6px;
@@ -3384,6 +3404,52 @@
       width: 100%; max-width: 220px; border-radius: 12px; display: block; margin: 0 auto;
       box-shadow: 0 10px 24px rgba(15,23,42,0.08);
     }
+
+    /* ── Coverly 引流弹层 ───────────────────────────────── */
+    .cv-overlay {
+      position: fixed; inset: 0; z-index: 10001;
+      display: none; align-items: center; justify-content: center;
+      background: rgba(15,23,42,0.55); backdrop-filter: blur(2px);
+      padding: 20px;
+    }
+    .cv-overlay.open { display: flex; }
+    .cv-modal {
+      position: relative; width: 100%; max-width: 440px;
+      background: linear-gradient(180deg, #fffdf8, #ffffff);
+      border: 1.5px solid #f3e8d2; border-radius: 20px;
+      padding: 34px 30px 28px;
+      box-shadow: 0 24px 60px rgba(15,23,42,0.25);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      text-align: center; animation: grp-pop 0.18s ease-out;
+    }
+    .cv-badge {
+      display: inline-block; margin-bottom: 14px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      color: #b45309; background: #fef3c7; border: 1px solid #fcd9a3;
+      padding: 4px 11px; border-radius: 999px;
+    }
+    .cv-title { font-size: 22px; font-weight: 800; color: #111; margin-bottom: 10px; line-height: 1.35; }
+    .cv-title span { color: #d1490b; }
+    .cv-desc { font-size: 13.5px; color: #6b7280; line-height: 1.85; margin: 0 auto 24px; max-width: 340px; }
+    .cv-desc strong { color: #111; }
+    .cv-actions { display: flex; flex-direction: column; gap: 10px; }
+    .cv-cta {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 20px; border-radius: 12px;
+      background: #24292f; color: #fff; text-decoration: none;
+      font-size: 14px; font-weight: 700; line-height: 1;
+      box-shadow: 0 4px 14px rgba(36,41,47,0.28);
+      transition: transform 0.12s, box-shadow 0.15s, filter 0.15s;
+    }
+    .cv-cta:hover { filter: brightness(1.15); box-shadow: 0 8px 20px rgba(36,41,47,0.36); transform: translateY(-1px); }
+    .cv-cta:active { transform: translateY(0); }
+    .cv-cta svg { width: 17px; height: 17px; }
+    .cv-ghost {
+      background: none; border: none; cursor: pointer;
+      font: inherit; font-size: 12.5px; color: #9ca3af;
+      padding: 4px; transition: color 0.15s;
+    }
+    .cv-ghost:hover { color: #6b7280; }
   </style>
 
   <div class="grp-overlay" id="grp-overlay" onclick="grpBackdrop(event)">
@@ -3400,6 +3466,27 @@
   </div>
 
   <div class="grp-toast" id="grp-toast">复制成功 ✓</div>
+
+  <!-- Coverly 引流弹层 -->
+  <div class="cv-overlay" id="cv-overlay" onclick="cvBackdrop(event)">
+    <div class="cv-modal" role="dialog" aria-modal="true" aria-label="前往新版封面工具 Coverly">
+      <button class="grp-close" aria-label="关闭" onclick="cvClose()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="cv-badge">当前为旧版</span>
+      <h2 class="cv-title">封面工具已升级为 <span>Coverly</span></h2>
+      <p class="cv-desc">这个页面是<strong>旧版</strong>封面工具。新版 <strong>Coverly</strong> 体验更好、持续更新，推荐前往使用。</p>
+      <div class="cv-actions">
+        <a class="cv-cta" href="https://coverly.79px.com/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 17 17 7M8 7h9v9"/>
+          </svg>
+          前往 Coverly 新版
+        </a>
+        <button class="cv-ghost" type="button" onclick="cvClose()">继续使用旧版</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     function grpOpen() { document.getElementById('grp-overlay').classList.add('open'); }
@@ -3428,6 +3515,14 @@
       document.body.removeChild(ta);
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') grpClose(); });
+
+    // ── Coverly 引流弹层 ──
+    function cvOpen() { document.getElementById('cv-overlay').classList.add('open'); }
+    function cvClose() { document.getElementById('cv-overlay').classList.remove('open'); }
+    function cvBackdrop(e) { if (e.target === e.currentTarget) cvClose(); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') cvClose(); });
+    // 默认弹出，引流到新版 Coverly
+    window.addEventListener('load', cvOpen);
   </script>
 </body>
 
